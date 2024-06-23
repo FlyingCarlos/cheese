@@ -30,11 +30,14 @@ class CHEESEAPI:
     :param debug: Print debug messages for rabbitmq
     :type debug: bool
     """
-    def __init__(self, host : str = 'localhost', port : int = 5672, timeout : float = 10, debug : bool = False):
+    def __init__(self,
+                 host : str = 'localhost', port : int = 5672,
+                 user : str = 'guest', password : str = 'guest',
+                 timeout : float = 10, debug : bool = False):
         self.timeout = timeout
 
         # Initialize rabbit MQ server
-        self.connection = BRabbit(host=host, port=port)
+        self.connection = BRabbit(host=host, port=port, user=user, password=password)
         self.debug = debug
 
         # Channel to get results back from main server

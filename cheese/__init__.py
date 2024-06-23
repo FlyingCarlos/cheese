@@ -55,6 +55,7 @@ class CHEESE:
         pipeline_kwargs : Dict[str, Any] = {}, model_kwargs : Dict[str, Any] = {},
         gradio : bool = True, draw_always : bool = False,
         host : str = 'localhost', port : int = 5672,
+        user : str = 'guest', password : str = 'guest',
         debug : bool = False,
         no_login : bool = False
         ):
@@ -64,7 +65,7 @@ class CHEESE:
         self.debug = debug
 
         # Initialize rabbit MQ server
-        self.connection = BRabbit(host=host, port=port)
+        self.connection = BRabbit(host=host, port=port, user=user, password=password)
 
         # Channel for client to notify of task completion
         self.subscriber = self.connection.EventSubscriber(

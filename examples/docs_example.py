@@ -1,11 +1,15 @@
 from cheese.data import BatchElement
 from dataclasses import dataclass
+from typing import Iterable
+import os
 
 """
     This is an example referenced in the docs for CHEESE. It provides a user with text, asks for a sentiment label,
     then has a model also provide a sentiment label.
 """
 
+os.environ["NO_PROXY"] = "localhost,"
+os.environ["GRADIO_ANALYTICS_ENABLED"] = "False"
 
 @dataclass
 class SentimentElement(BatchElement):
@@ -36,13 +40,15 @@ class SentimentModel(BaseModel):
         super().__init__()
 
         # Use HF Transformers to create a small sentiment analysis pipeline
-        self.model = pipeline("sentiment-analysis", model = "nlptown/bert-base-multilingual-uncased-sentiment")
+        # self.model = pipeline("sentiment-analysis", model = "nlptown/bert-base-multilingual-uncased-sentiment")
 
-    def process(self, data : SentimentElement) -> SentimentElement:
+    def process(self, data_list : Iterable[BatchElement]) -> Iterable[BatchElement]:
+        data = data_list[0]
         txt = data.text
-        label = self.model(txt)[0]["label"]
+        # label = self.model(txt)[0]["label"]
+        label = True
         data.model_label = label
-        return data
+        return [data]
 
 from cheese.client.gradio_client import GradioFront
 import gradio as gr
@@ -97,7 +103,9 @@ cheese = CHEESE(
         "write_path" : "./sentiment_result",
         "force_new" : True,
         "max_length" : 5
-    }
+    },
+    host = "192.168.50.186",
+    no_login=True
 )
 
 print(cheese.launch()) # Prints the URL

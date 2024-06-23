@@ -249,8 +249,8 @@ class GradioFront:
     def __init__(self, no_login : bool = False):
         self.manager : GradioClientManager = None
         with gr.Blocks() as self.demo:
-            self.id : gr.State = gr.Variable(-1)
-            self.task : gr.State = gr.Variable(None)
+            self.id = gr.State(-1)
+            self.task = gr.State(None)
 
             with gr.Column(visible = True) as login:
                 login_comps : Dict[str, Component] = self.login()
@@ -292,10 +292,10 @@ class GradioFront:
         if self.manager is None:
             raise Exception("Error: Tried to lanuch frontend without connecting it to a client manager. Please use GradioFront.set_manager()")
         
-        self.demo.launch(
+        self.demo.queue().launch(
             share = True, quiet = True,
+            server_name = "0.0.0.0",
             prevent_thread_lock = True,
-            enable_queue = True
         )
 
     def set_manager(self, manager : GradioClientManager):
@@ -308,11 +308,11 @@ class GradioFront:
         """
         Returns basic components for login screen
         """
-        gr.Textbox("Welcome to CHEESE!", show_label = False, interactive = False).style(rounded = False, border = False)
+        gr.Textbox("Welcome to CHEESE!", show_label = False, interactive = False)
         idbox = gr.Textbox(label = "User ID", interactive = True, max_lines=1)
         pwdbox = gr.Textbox(label = "User Password", interactive = True, max_lines=1)
         submit = gr.Button("Submit")
-        error = gr.Textbox("Invalid ID or password", visible = False).style(rounded = False, border = False)
+        error = gr.Textbox("Invalid ID or password", visible = False)
         
         return {"idbox" : idbox, "pwdbox" : pwdbox, "submit" : submit, "error" : error}
             
